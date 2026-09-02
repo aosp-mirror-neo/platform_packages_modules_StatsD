@@ -107,7 +107,10 @@ public class ValidationTests extends DeviceTestCase implements IBuildReceiver {
     private static final boolean ENABLE_LOAD_TEST = false;
 
     public void testPartialWakelock() throws Exception {
-        if (DeviceUtils.hasFeature(getDevice(), FEATURE_AUTOMOTIVE)) return;
+        if (DeviceUtils.hasFeature(getDevice(), FEATURE_AUTOMOTIVE)
+                || !DeviceUtils.hasBattery(getDevice())) {
+            return;
+        }
         resetBatteryStats();
         DeviceUtils.unplugDevice(getDevice());
         DeviceUtils.flushBatteryStatsHandlers(getDevice());
@@ -152,7 +155,10 @@ public class ValidationTests extends DeviceTestCase implements IBuildReceiver {
 
     @RestrictedBuildTest
     public void testPartialWakelockDuration() throws Exception {
-        if (DeviceUtils.hasFeature(getDevice(), FEATURE_AUTOMOTIVE)) return;
+        if (DeviceUtils.hasFeature(getDevice(), FEATURE_AUTOMOTIVE)
+                || !DeviceUtils.hasBattery(getDevice())) {
+            return;
+        }
 
         // getUid() needs shell command via ADB. turnScreenOff() sometimes let system go to suspend.
         // ADB disconnection causes failure of getUid(). Move up here before turnScreenOff().
@@ -202,6 +208,10 @@ public class ValidationTests extends DeviceTestCase implements IBuildReceiver {
 
     public void testPartialWakelockLoad() throws Exception {
         if (!ENABLE_LOAD_TEST) return;
+        if (DeviceUtils.hasFeature(getDevice(), FEATURE_AUTOMOTIVE)
+                || !DeviceUtils.hasBattery(getDevice())) {
+            return;
+        }
         DeviceUtils.turnScreenOn(getDevice()); // To ensure that the ScreenOff later gets logged.
         uploadWakelockDurationBatteryStatsConfig(TimeUnit.CTS);
         RunUtil.getDefault().sleep(AtomTestUtils.WAIT_TIME_SHORT);
